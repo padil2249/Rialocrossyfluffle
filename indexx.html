@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rialo CrossyFluffle — Web3 Game on Sepolia</title>
+  <meta name="description" content="Rialo CrossyFluffle is a Web3 blockchain game deployed on Sepolia testnet. Play, earn NFTs, and rise to the top of the leaderboard." />
+  <meta name="keywords" content="Web3, NFT, blockchain game, Sepolia, CrossyFluffle, Rialo" />
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ─── Particle Canvas ─── -->
+  <canvas id="particleCanvas"></canvas>
+  <!-- ─── Grid Overlay ─── -->
+  <div class="grid-overlay"></div>
+  <!-- ─── NAV ─── -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo">
+        <span class="logo-icon">❄</span>
+        <span class="logo-text">Rialo <span class="accent">CrossyFluffle</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#about">Protocol</a></li>
+        <li><a href="#how-to-play">How to Play</a></li>
+        <li><a href="#nft">NFTs</a></li>
+        <li><a href="#leaderboard">Leaderboard</a></li>
+        <li><a href="#deploy">Deploy</a></li>
+      </ul>
+      <button class="btn-connect" id="connectBtn" onclick="connectWallet()">
+        <span class="btn-icon">⬡</span>
+        Connect Wallet
+      </button>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMenu()">☰</button>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#about" onclick="toggleMenu()">Protocol</a>
+      <a href="#how-to-play" onclick="toggleMenu()">How to Play</a>
+      <a href="#nft" onclick="toggleMenu()">NFTs</a>
+      <a href="#leaderboard" onclick="toggleMenu()">Leaderboard</a>
+      <a href="#deploy" onclick="toggleMenu()">Deploy</a>
+    </div>
+  </nav>
+  <!-- ─── HERO ─── -->
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        LIVE ON SEPOLIA TESTNET
+      </div>
+      <h1 class="hero-title">
+        Cross the Chain,<br/>
+        <span class="gradient-text">Earn the Fluff</span>
+      </h1>
+      <p class="hero-sub">
+        The first fully on-chain arcade game where every hop counts.<br />
+        Pay entry. Play hard. Score 1000+ to mint your exclusive NFT.
+      </p>
+      <div class="hero-code-block">
+        <div class="code-header">
+          <div class="code-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="code-label">system.coldstart</span>
+        </div>
+        <div class="code-body">
+          <div class="code-line"><span class="code-comment">// Rialo CrossyFluffle Protocol v1.0</span></div>
+          <div class="code-line"><span class="code-keyword">system</span>.<span class="code-func">coldstart</span>({ <span class="code-key">temperature</span>: <span class="code-str">"subzero"</span> })</div>
+          <div class="code-line"><span class="code-keyword">contract</span>.<span class="code-func">connect</span>(<span class="code-str">"sepolia"</span>, chainId: <span class="code-num">11155111</span>)</div>
+          <div class="code-line"><span class="code-keyword">await</span> fluffle.<span class="code-func">enterGame</span>({ value: ethers.<span class="code-func">parseEther</span>(<span class="code-str">"0.001"</span>) })<span class="cursor">▋</span></div>
+          <div class="code-line status-line"><span class="code-success">✓</span> <span class="code-comment">Entry confirmed — Block #</span><span id="blockNum">19284731</span></div>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="enterGame()">
+          <span>⚡</span> Play Now — 0.001 ETH
+        </button>
+        <a href="#about" class="btn-ghost">
+          Learn Protocol <span>→</span>
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-val" data-target="4827">0</span>
+          <span class="stat-lbl">Games Played</span>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat">
+          <span class="stat-val" data-target="312">0</span>
+          <span class="stat-lbl">NFTs Minted</span>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="stat">
+          <span class="stat-val" data-target="9">0</span>
+          <span class="stat-lbl">ETH Distributed</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="fluffle-card">
+        <div class="fluffle-glow"></div>
+        <div class="fluffle-inner">
+          <div class="fluffle-character">🐇</div>
+          <div class="fluffle-score">
+            <span class="score-label">TOP SCORE</span>
+            <span class="score-val">8,420</span>
+          </div>
+          <div class="fluffle-nft-badge">NFT HOLDER ✦</div>
+          <div class="fluffle-wallet">0x742...f3a2</div>
+          <div class="fluffle-chain">
+            <span class="chain-dot"></span>
+            Sepolia · #19284731
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ─── ABOUT / PROTOCOL ─── -->
+  <section class="section" id="about">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">Protocol Overview</div>
+        <h2>How the <span class="gradient-text">Protocol Works</span></h2>
+        <p>CrossyFluffle runs entirely on-chain. Every game, score, and reward is verifiable on the Sepolia blockchain.</p>
+      </div>
+      <div class="cards-grid">
+        <div class="glass-card">
+          <div class="card-icon">⬡</div>
+          <h3>On-Chain Entry</h3>
+          <p>Pay <strong>0.001 ETH</strong> entry fee directly to the smart contract. The contract holds funds trustlessly — no escrow, no middlemen.</p>
+          <div class="card-tag">EVM Native</div>
+        </div>
+        <div class="glass-card">
+          <div class="card-icon">🔐</div>
+          <h3>Signed Scores</h3>
+          <p>Your score is cryptographically signed by our trusted backend wallet using ECDSA signatures — preventing any score manipulation.</p>
+          <div class="card-tag">ECDSA Verified</div>
+        </div>
+        <div class="glass-card">
+          <div class="card-icon">🏆</div>
+          <h3>Dynamic Rewards</h3>
+          <p>Top scores are eligible for ETH payouts distributed from the contract prize pool. The better you play, the more you earn.</p>
+          <div class="card-tag">Auto-Distribute</div>
+        </div>
+        <div class="glass-card">
+          <div class="card-icon">❄</div>
+          <h3>NFT Minting</h3>
+          <p>Score <strong>1000+ points</strong> to unlock your exclusive Fluffle NFT. Each token is unique, on-chain, and permanently yours.</p>
+          <div class="card-tag">ERC-721</div>
+        </div>
+        <div class="glass-card">
+          <div class="card-icon">📊</div>
+          <h3>Live Leaderboard</h3>
+          <p>Real-time leaderboard pulled directly from contract events. No centralized database — the chain is the source of truth.</p>
+          <div class="card-tag">Event-Driven</div>
+        </div>
+        <div class="glass-card">
+          <div class="card-icon">🔓</div>
+          <h3>Open Source</h3>
+          <p>All smart contracts are verified on Etherscan. Fork it, audit it, deploy your own version. Fully permissionless.</p>
+          <div class="card-tag">MIT License</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ─── HOW TO PLAY ─── -->
+  <section class="section section-dark" id="how-to-play">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">Game Guide</div>
+        <h2>Play in <span class="gradient-text">3 Steps</span></h2>
+        <p>Connect, invest, compete. It's that simple.</p>
+      </div>
+      <div class="steps-container">
+        <div class="step-card">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <h3>Connect &amp; Fund</h3>
+            <p>Connect your MetaMask wallet on Sepolia testnet. Make sure you have at least <strong>0.001 ETH</strong> + gas fees.</p>
+            <div class="step-code">
+              <span class="code-comment">// Switch to Sepolia</span><br/>
+              chainId: <span class="code-num">0xaa36a7</span> <span class="code-comment">// 11155111</span>
+            </div>
+          </div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <h3>Enter the Game</h3>
+            <p>Click "Play Now" to call <code>enterGame()</code> on our contract. Your ETH is locked until the game resolves.</p>
+            <div class="step-code">
+              <span class="code-keyword">contract</span>.<span class="code-func">enterGame</span>({<br/>
+              &nbsp;&nbsp;value: <span class="code-str">"0.001 ETH"</span><br/>
+              })
+            </div>
+          </div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step-card">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <h3>Score &amp; Claim</h3>
+            <p>Play the game, submit your signed score. Hit 1000+ points to mint your NFT. Top scores earn ETH rewards.</p>
+            <div class="step-code">
+              <span class="code-keyword">contract</span>.<span class="code-func">submitScore</span>(<br/>
+              &nbsp;&nbsp;score, nonce, sig<br/>
+              )
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ─── NFT SECTION ─── -->
+  <section class="section" id="nft">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">NFT Collection</div>
+        <h2>The <span class="gradient-text">Fluffle Collection</span></h2>
+        <p>Each NFT is dynamically generated based on your score. Higher scores unlock rarer traits.</p>
+      </div>
+      <div class="nft-grid">
+        <div class="nft-card" data-rarity="common">
+          <div class="nft-badge">COMMON</div>
+          <div class="nft-art">🐇</div>
+          <div class="nft-info">
+            <span class="nft-name">Fluffle #001</span>
+            <span class="nft-score">1,000+ pts</span>
+          </div>
+          <div class="nft-traits">
+            <span>Speed: ★★☆</span>
+            <span>Luck: ★☆☆</span>
+          </div>
+        </div>
+        <div class="nft-card" data-rarity="rare">
+          <div class="nft-badge">RARE</div>
+          <div class="nft-art">🐇✨</div>
+          <div class="nft-info">
+            <span class="nft-name">Fluffle #042</span>
+            <span class="nft-score">3,000+ pts</span>
+          </div>
+          <div class="nft-traits">
+            <span>Speed: ★★★</span>
+            <span>Luck: ★★☆</span>
+          </div>
+        </div>
+        <div class="nft-card featured" data-rarity="legendary">
+          <div class="nft-badge">LEGENDARY</div>
+          <div class="nft-art">🐇❄👑</div>
+          <div class="nft-info">
+            <span class="nft-name">Fluffle #007</span>
+            <span class="nft-score">5,000+ pts</span>
+          </div>
+          <div class="nft-traits">
+            <span>Speed: ★★★</span>
+            <span>Luck: ★★★</span>
+          </div>
+        </div>
+        <div class="nft-card" data-rarity="rare">
+          <div class="nft-badge">RARE</div>
+          <div class="nft-art">🐇🌌</div>
+          <div class="nft-info">
+            <span class="nft-name">Fluffle #099</span>
+            <span class="nft-score">3,500+ pts</span>
+          </div>
+          <div class="nft-traits">
+            <span>Speed: ★★★</span>
+            <span>Luck: ★★☆</span>
+          </div>
+        </div>
+      </div>
+      <div class="nft-info-bar">
+        <div class="info-item">
+          <span class="info-val">ERC-721</span>
+          <span class="info-lbl">Standard</span>
+        </div>
+        <div class="info-item">
+          <span class="info-val">On-Chain</span>
+          <span class="info-lbl">Metadata</span>
+        </div>
+        <div class="info-item">
+          <span class="info-val">1,000</span>
+          <span class="info-lbl">Min Score</span>
+        </div>
+        <div class="info-item">
+          <span class="info-val">Free</span>
+          <span class="info-lbl">Mint Cost</span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ─── LEADERBOARD ─── -->
+  <section class="section section-dark" id="leaderboard">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">Live Chain Data</div>
+        <h2>Global <span class="gradient-text">Leaderboard</span></h2>
+        <p>Rankings pulled directly from on-chain events. Updated every block.</p>
+      </div>
+      <div class="leaderboard-wrapper">
+        <div class="lb-header">
+          <span>#</span>
+          <span>Player</span>
+          <span>Score</span>
+          <span>Games</span>
+          <span>NFTs</span>
+          <span>Status</span>
+        </div>
+        <div class="lb-body" id="lbBody"></div>
+      </div>
+      <div class="lb-footer">
+        <span>🔴 LIVE · Block synced every 12s</span>
+        <button class="btn-refresh" onclick="refreshLeaderboard()">↺ Refresh</button>
+      </div>
+    </div>
+  </section>
+  <!-- ─── DEPLOY SECTION ─── -->
+  <section class="section" id="deploy">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-badge">Developer Tools</div>
+        <h2>Deploy Your <span class="gradient-text">Own Instance</span></h2>
+        <p>All contracts are open-source. Fork and deploy your CrossyFluffle instance in minutes.</p>
+      </div>
+      <div class="deploy-grid">
+        <div class="deploy-code-card">
+          <div class="code-header">
+            <div class="code-dots"><span></span><span></span><span></span></div>
+            <span class="code-label">deploy.js · Hardhat</span>
+            <button class="copy-btn" onclick="copyCode()">Copy</button>
+          </div>
+          <pre class="deploy-code"><span class="code-comment">// ══ Rialo CrossyFluffle — Deploy ══</span>
+<span class="code-keyword">const</span> { ethers } = <span class="code-func">require</span>(<span class="code-str">"hardhat"</span>);
+<span class="code-keyword">async function</span> <span class="code-func">main</span>() {
+  <span class="code-keyword">const</span> [deployer] = <span class="code-keyword">await</span> ethers.<span class="code-func">getSigners</span>();
+  
+  <span class="code-keyword">const</span> TRUSTED_SIGNER = process.env.TRUSTED_SIGNER;
+  <span class="code-keyword">const</span> BASE_URI = process.env.BASE_URI || <span class="code-str">""</span>;
+  
+  <span class="code-keyword">const</span> CrossyFluffle = <span class="code-keyword">await</span> ethers
+    .<span class="code-func">getContractFactory</span>(<span class="code-str">"CrossyFluffle"</span>);
+    
+  <span class="code-keyword">const</span> contract = <span class="code-keyword">await</span> CrossyFluffle
+    .<span class="code-func">deploy</span>(TRUSTED_SIGNER, BASE_URI);
+    
+  <span class="code-keyword">await</span> contract.<span class="code-func">waitForDeployment</span>();
+  console.<span class="code-func">log</span>(<span class="code-str">"✓ Deployed:"</span>, <span class="code-keyword">await</span> contract.<span class="code-func">getAddress</span>());
+}
+<span class="code-func">main</span>().<span class="code-func">catch</span>(console.error);</pre>
+        </div>
+        <div class="deploy-steps">
+          <div class="d-step">
+            <div class="d-step-num">1</div>
+            <div>
+              <strong>Install Dependencies</strong>
+              <code>npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox</code>
+            </div>
+          </div>
+          <div class="d-step">
+            <div class="d-step-num">2</div>
+            <div>
+              <strong>Set Environment</strong>
+              <code>TRUSTED_SIGNER=0x... BASE_URI=ipfs://...</code>
+            </div>
+          </div>
+          <div class="d-step">
+            <div class="d-step-num">3</div>
+            <div>
+              <strong>Deploy to Sepolia</strong>
+              <code>npx hardhat run scripts/deploy.js --network sepolia</code>
+            </div>
+          </div>
+          <div class="d-step">
+            <div class="d-step-num">4</div>
+            <div>
+              <strong>Verify on Etherscan</strong>
+              <code>npx hardhat verify --network sepolia 0xYOUR_CONTRACT</code>
+            </div>
+          </div>
+          <div class="d-step">
+            <div class="d-step-num">5</div>
+            <div>
+              <strong>Fund &amp; Play</strong>
+              <code>Send ETH to contract → Update .env → Launch!</code>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="contract-info">
+        <div class="ci-item">
+          <span class="ci-label">Network</span>
+          <span class="ci-val">Sepolia Testnet</span>
+        </div>
+        <div class="ci-item">
+          <span class="ci-label">Chain ID</span>
+          <span class="ci-val code-num">11155111</span>
+        </div>
+        <div class="ci-item">
+          <span class="ci-label">Entry Fee</span>
+          <span class="ci-val">0.001 ETH</span>
+        </div>
+        <div class="ci-item">
+          <span class="ci-label">NFT Threshold</span>
+          <span class="ci-val">1,000 pts</span>
+        </div>
+        <div class="ci-item">
+          <span class="ci-label">Token Standard</span>
+          <span class="ci-val">ERC-721</span>
+        </div>
+        <div class="ci-item">
+          <span class="ci-label">License</span>
+          <span class="ci-val">MIT</span>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ─── FOOTER ─── -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <span class="logo-icon">❄</span>
+            <span class="logo-text">Rialo <span class="accent">CrossyFluffle</span></span>
+          </div>
+          <p>A fully on-chain Web3 arcade game. Play, earn, and own your achievements forever on the Sepolia blockchain.</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-col">
+            <h4>Protocol</h4>
+            <a href="#about">Overview</a>
+            <a href="#how-to-play">How to Play</a>
+            <a href="#nft">NFT Collection</a>
+            <a href="#leaderboard">Leaderboard</a>
+          </div>
+          <div class="footer-col">
+            <h4>Developer</h4>
+            <a href="#deploy">Deploy Guide</a>
+            <a href="#">Smart Contract</a>
+            <a href="#">Etherscan</a>
+            <a href="#">GitHub</a>
+          </div>
+          <div class="footer-col">
+            <h4>Community</h4>
+            <a href="#">Discord</a>
+            <a href="#">Twitter / X</a>
+            <a href="#">Telegram</a>
+            <a href="#">Medium</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Rialo CrossyFluffle. All rights reserved.</span>
+        <span class="footer-chain">
+          <span class="chain-dot"></span>
+          Sepolia Testnet · Chain ID 11155111
+        </span>
+      </div>
+    </div>
+  </footer>
+  <!-- ─── WALLET MODAL ─── -->
+  <div class="modal-overlay" id="walletModal" onclick="closeModal(event)">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <h2>Connect Wallet</h2>
+      <p>Connect to Sepolia testnet to start playing</p>
+      <div class="wallet-options">
+        <button class="wallet-btn" onclick="connectMetaMask()">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/MetaMask_Fox.svg/64px-MetaMask_Fox.svg.png" alt="MetaMask" width="32" height="32" />
+          MetaMask
+        </button>
+        <button class="wallet-btn" onclick="connectMetaMask()">
+          <span style="font-size:28px">🔗</span>
+          WalletConnect
+        </button>
+        <button class="wallet-btn" onclick="connectMetaMask()">
+          <span style="font-size:28px">💎</span>
+          Coinbase Wallet
+        </button>
+      </div>
+      <p class="modal-note">Make sure you're on <strong>Sepolia testnet</strong> (Chain ID: 11155111)</p>
+    </div>
+  </div>
+  <!-- ─── TOAST ─── -->
+  <div class="toast" id="toast"></div>
+  <!-- Web3 Dependencies (ethers v6) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.11.1/ethers.umd.min.js"></script>
+  <!-- Main Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>

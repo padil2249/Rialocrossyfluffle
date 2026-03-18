@@ -1,0 +1,323 @@
+/* ═══════════════════════════════════════════════════════
+   Rialo CrossyFluffle — Main Scripts
+   ═══════════════════════════════════════════════════════ */
+// ── Particle Animation ──────────────────────────────
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let w, h;
+function initCanvas() {
+  w = canvas.width = window.innerWidth;
+  h = canvas.height = window.innerHeight;
+  particles = [];
+  
+  const particleCount = Math.floor((w * h) / 15000);
+  
+  for (let i = 0; i < particleCount; i++) {
+    particles.push({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: Math.random() * 1.5 + 0.5,
+      dx: (Math.random() - 0.5) * 0.4,
+      dy: (Math.random() - 0.5) * 0.4,
+      opacity: Math.random() * 0.5 + 0.1
+    });
+  }
+}
+function drawParticles() {
+  ctx.clearRect(0, 0, w, h);
+  
+  particles.forEach((p, i) => {
+    p.x += p.dx;
+    p.y += p.dy;
+    
+    if (p.x < 0 || p.x > w) p.dx = -p.dx;
+    if (p.y < 0 || p.y > h) p.dy = -p.dy;
+    
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0, 200, 255, ${p.opacity})`;
+    ctx.fill();
+    
+    // Connect near particles
+    for (let j = i + 1; j < particles.length; j++) {
+      const p2 = particles[j];
+      const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+      
+      if (dist < 100) {
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(p2.x, p2.y);
+        ctx.strokeStyle = `rgba(0, 200, 255, ${0.1 * (1 - dist/100)})`;
+        ctx.stroke();
+      }
+    }
+  });
+  
+  requestAnimationFrame(drawParticles);
+}
+window.addEventListener('resize', initCanvas);
+initCanvas();
+drawParticles();
+// ── Navbar Scroll Effect ────────────────────────────
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 50) {
+    navbar.classList.add('scrolled');
+  } else {
+    navbar.classList.remove('scrolled');
+  }
+});
+// ── Mobile Menu Toggle ──────────────────────────────
+function toggleMenu() {
+  const menu = document.getElementById('mobileMenu');
+  menu.classList.toggle('open');
+}
+// ── Typing Animation for Hero Code ──────────────────
+const typedLine = document.getElementById('typedLine');
+const codeText = 'await fluffle.enterGame({ value: ethers.parseEther("0.001") })';
+let typeIndex = 0;
+function typeCode() {
+  if (typeIndex < codeText.length) {
+    const htmlObj = generateSyntaxHighlight(codeText.substring(0, typeIndex + 1));
+    typedLine.innerHTML = htmlObj + '<span class="cursor">▋</span>';
+    typeIndex++;
+    setTimeout(typeCode, 40 + Math.random() * 40);
+  } else {
+    setTimeout(() => {
+      // Small simulation of "block processing"
+      const blk = document.getElementById('blockNum');
+      let num = 19284731;
+      setInterval(() => {
+        num += Math.floor(Math.random() * 3);
+        if (blk) blk.innerText = num;
+      }, 12000);
+    }, 1000);
+  }
+}
+function generateSyntaxHighlight(str) {
+  let res = str;
+  res = res.replace('await', '<span class="code-keyword">await</span>');
+  res = res.replace('enterGame', '<span class="code-func">enterGame</span>');
+  res = res.replace('value', '<span class="code-key">value</span>');
+  res = res.replace('ethers', '<span class="code-keyword">ethers</span>');
+  res = res.replace('parseEther', '<span class="code-func">parseEther</span>');
+  res = res.replace('"0.001"', '<span class="code-str">"0.001"</span>');
+  return res;
+}
+setTimeout(typeCode, 1500);
+// ── Stat Counter Animation ──────────────────────────
+const stats = document.querySelectorAll('.stat-val');
+let initializedCounters = false;
+function animateCounters() {
+  stats.forEach(stat => {
+    const target = +stat.getAttribute('data-target');
+    const duration = 2000;
+    const step = target / (duration / 16);
+    let current = 0;
+    const update = () => {
+      current += step;
+      if (current < target) {
+        stat.innerText = Math.floor(current).toLocaleString();
+        requestAnimationFrame(update);
+      } else {
+        stat.innerText = target.toLocaleString();
+      }
+    };
+    update();
+  });
+}
+// Trigger counters on scroll
+window.addEventListener('scroll', () => {
+  if (!initializedCounters && window.scrollY > 100) {
+    animateCounters();
+    initializedCounters = true;
+  }
+});
+// If already passed threshold on load
+if (window.scrollY > 100) {
+  animateCounters();
+  initializedCounters = true;
+}
+// ── Mock Leaderboard Data ───────────────────────────
+const mockPlayers = [
+  { rank: 1, addr: "0x742...f3a2", score: 8420, games: 45, nfts: 3, hasNft: true },
+  { rank: 2, addr: "0x19a...8c2b", score: 7100, games: 32, nfts: 2, hasNft: true },
+  { rank: 3, addr: "0x8f2...b13d", score: 6850, games: 80, nfts: 2, hasNft: true },
+  { rank: 4, addr: "0x33d...99e1", score: 4500, games: 12, nfts: 1, hasNft: true },
+  { rank: 5, addr: "0xab1...cc44", score: 3200, games: 5, nfts: 1, hasNft: true },
+  { rank: 6, addr: "0x992...aa11", score: 950, games: 3, nfts: 0, hasNft: false },
+  { rank: 7, addr: "0xdd4...ff22", score: 820, games: 8, nfts: 0, hasNft: false },
+];
+function renderLeaderboard() {
+  const lbBody = document.getElementById('lbBody');
+  if(!lbBody) return;
+  lbBody.innerHTML = '';
+  
+  mockPlayers.forEach((p, index) => {
+    let rankClass = "lb-rank";
+    if(p.rank === 1) rankClass += " gold";
+    else if(p.rank === 2) rankClass += " silver";
+    else if(p.rank === 3) rankClass += " bronze";
+    let statusHtml = p.hasNft ? '<span class="status-nft">NFT HOLDER</span>' : '<span class="status-none">ACTIVE</span>';
+    const row = document.createElement('div');
+    row.className = 'lb-row';
+    row.style.animationDelay = `${index * 0.05}s`;
+    
+    row.innerHTML = `
+      <div class="${rankClass}">#${p.rank}</div>
+      <div class="lb-player">
+        <div class="lb-avatar">${p.score > 5000 ? '👑' : '🐇'}</div>
+        <span class="lb-addr">${p.addr}</span>
+      </div>
+      <div class="lb-score">${p.score.toLocaleString()}</div>
+      <div class="lb-games">${p.games}</div>
+      <div class="lb-nfts">${p.nfts}</div>
+      <div class="lb-status">${statusHtml}</div>
+    `;
+    
+    lbBody.appendChild(row);
+  });
+}
+function refreshLeaderboard() {
+  const btn = document.querySelector('.btn-refresh');
+  btn.innerText = '↺ Syncing...';
+  btn.style.opacity = '0.5';
+  
+  setTimeout(() => {
+    renderLeaderboard();
+    showToast('Leaderboard synced with block #19284742');
+    btn.innerText = '↺ Refresh';
+    btn.style.opacity = '1';
+  }, 800);
+}
+// Initial render
+renderLeaderboard();
+// ── Web3 & Contract Logic ─────────────────────────────
+const CONTRACT_ADDRESS = "0x0000000000000000000000000000000000000000"; // TODO: Replace with deployed address
+const SEPOLIA_CHAIN_ID = 11155111;
+let provider;
+let signer;
+let userAddress = null;
+// Minimal ABI for entering the game
+const contractABI = [
+  "function enterGame() external payable"
+];
+function connectWallet() {
+  document.getElementById('walletModal').classList.add('open');
+}
+function closeModal(event) {
+  if (event) {
+    if (event.target.classList.contains('modal-overlay')) {
+      document.getElementById('walletModal').classList.remove('open');
+    }
+  } else {
+    document.getElementById('walletModal').classList.remove('open');
+  }
+}
+async function connectMetaMask() {
+  closeModal();
+  if (typeof window.ethereum === 'undefined') {
+    showToast('MetaMask is not installed!', 'error');
+    return;
+  }
+  showToast('Connecting to wallet...', 'info');
+  try {
+    // Request account access
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    userAddress = accounts[0];
+    provider = new ethers.BrowserProvider(window.ethereum);
+    signer = await provider.getSigner();
+    // Check Network
+    const network = await provider.getNetwork();
+    if (Number(network.chainId) !== SEPOLIA_CHAIN_ID) {
+      await switchToSepolia();
+    }
+    // Update UI
+    const btn = document.getElementById('connectBtn');
+    btn.classList.add('connected');
+    const shortAddr = `${userAddress.substring(0, 6)}...${userAddress.substring(userAddress.length - 4)}`;
+    btn.innerHTML = `⚡ ${shortAddr}`;
+    
+    showToast('Connected to Sepolia Network', 'success');
+  } catch (error) {
+    console.error(error);
+    showToast('Failed to connect wallet.', 'error');
+  }
+}
+async function switchToSepolia() {
+  try {
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: '0xaa36a7' }], // 11155111 in hex
+    });
+  } catch (error) {
+    if (error.code === 4902) {
+      showToast('Please add Sepolia to your wallet manually.', 'error');
+    } else {
+      showToast('Failed to switch to Sepolia network.', 'error');
+    }
+  }
+}
+async function enterGame() {
+  if (!signer) {
+    connectWallet();
+    return;
+  }
+  try {
+    showToast('Initiating transaction...', 'info');
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, contractABI, signer);
+    
+    // Entry fee is 0.001 ETH
+    const tx = await contract.enterGame({ value: ethers.parseEther("0.001") });
+    showToast(`Transaction sent! Waiting for confirmation...`, 'info');
+    
+    const receipt = await tx.wait();
+    showToast(`Game entered successfully! (Block ${receipt.blockNumber})`, 'success');
+    // Here you would trigger the actual canvas game UI to start
+    console.log("Start gameplay logic here");
+  } catch (error) {
+    console.error(error);
+    showToast(error.message || 'Transaction failed or rejected.', 'error');
+  }
+}
+// ── Toast Notifications ─────────────────────────────
+function showToast(msg, type = 'success') {
+  const toast = document.getElementById('toast');
+  if(!toast) return;
+  toast.innerText = msg;
+  toast.className = `toast show ${type}`;
+  
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+// ── Copy to Clipboard ───────────────────────────────
+function copyCode() {
+  const code = document.getElementById('deployCode');
+  if(!code) return;
+  
+  navigator.clipboard.writeText(code.innerText).then(() => {
+    showToast('Code copied to clipboard!');
+  }).catch(err => {
+    console.error('Failed to copy: ', err);
+  });
+}
+// ── Smooth Scroll Offset ────────────────────────────
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    if (this.getAttribute('href') === '#') return;
+    
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      const headerOffset = 80;
+      const elementPosition = target.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+    }
+  });
+});
